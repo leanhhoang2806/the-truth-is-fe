@@ -17,7 +17,7 @@ const postAnyMetric = async (limit, accessToken) => {
   const url = `${BASE_URL}/alert`;
   const payload = {
     limit: parseInt(limit),
-    alertType: "Any"
+    alertType: "Any",
   };
 
   return postRequestWithToken(url, payload, accessToken);
@@ -28,7 +28,7 @@ const postSpecificMetric = async (limit, metric, accessToken) => {
   const payload = {
     limit: parseInt(limit),
     metrics: metric,
-    alertType: "Combined"
+    alertType: "Combined",
   };
 
   return postRequestWithToken(url, payload, accessToken);
@@ -54,7 +54,7 @@ const getAlert = async (token) => {
   return getWithToken(url, token);
 };
 
-const deleteAlert = async (documentId,accessToken) => {
+const deleteAlert = async (documentId, accessToken) => {
   const url = `${BASE_URL}/alert/${documentId}`;
   const response = await axios.delete(url, {
     headers: {

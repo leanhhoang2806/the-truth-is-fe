@@ -120,19 +120,19 @@ const AlertComponent = () => {
   };
 
   const handleRemoveAlert = async () => {
-    await deleteAlert(data["_id"],getToken());
+    await deleteAlert(data["_id"], getToken());
     await fetchData();
     setAnyInputValue("");
     setAlert("");
   };
   const formatMetrics = (metrics) => {
     if (!metrics || metrics.length === 0) {
-      return 'Any';
+      return "Any";
     }
     if (metrics.length === 1) {
-      return metrics[0] + '.';
+      return metrics[0] + ".";
     }
-    return metrics.slice(0, -1).join(', ') + ', and ' + metrics.slice(-1) + '.';
+    return metrics.slice(0, -1).join(", ") + ", and " + metrics.slice(-1) + ".";
   };
 
   useEffect(() => {
@@ -159,7 +159,10 @@ const AlertComponent = () => {
         )}
         {Object.keys(data).length > 0 && (
           <Typography variant="h7" component="div">
-            Metric type: <span style={{ color: "red" }}>{formatMetrics(data["metrics"])}</span>
+            Metric type:{" "}
+            <span style={{ color: "red" }}>
+              {formatMetrics(data["metrics"])}
+            </span>
           </Typography>
         )}
         {Object.keys(data).length > 0 && (
