@@ -6,6 +6,8 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Avatar,
+  Box
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -157,14 +159,15 @@ const Theme = ({ children }) => {
       <AppBar position="fixed" style={styles.topAppBar}>
         <Toolbar>
           {currentPath === "/" && (
-            <Typography
-              variant="h6"
-              sx={{ flexGrow: 1, color: "black", textDecoration: "none" }}
-              component={Link}
-              to="/"
-            >
-              popo24
-            </Typography>
+             <Box component={Link} to="/" >
+          
+                    <Avatar
+                    alt="App Icon"
+                    src="/apple-touch-icon.png"
+                    sx={{ marginRight: '10px', width: 56, height: 56 }}
+                    variant="square"
+                  />
+                          </Box>
           )}
           <IconButton
             edge="end"

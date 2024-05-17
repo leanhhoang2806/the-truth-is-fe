@@ -777,22 +777,57 @@ const App = () => {
               textAlign: "left",
             }}
           >
-            <Typography variant="h5" style={{ marginBottom: "20px" }}>
-              Monitor and Alert system for Large Language Models
-            </Typography>
-            <Typography variant="body1" style={{ marginBottom: "20px" }}>
-              - There are many LLM models out there
-            </Typography>
-            <Typography variant="body1" style={{ marginBottom: "20px" }}>
-              - It's hard to measure the model effectiveness
-            </Typography>
-            <Typography variant="body1" style={{ marginBottom: "20px" }}>
-              - Popo24 designed to help the evaluation of LLM response
-              systematically
-            </Typography>
-            <Typography variant="body1" style={{ marginBottom: "20px" }}>
-              - Moving beyond hackathon and proof of concepts
-            </Typography>
+      <Typography variant="h5" sx={{ marginBottom: '20px', color: '#333', fontWeight: 'bold' }}>
+        Monitor and Alert for Chatbots
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          marginBottom: '20px',
+          color: '#555',
+          backgroundColor: '#e0e0e0',
+          padding: '10px',
+          borderRadius: '5px'
+        }}
+      >
+        - Chatbot behaviors are often unpredictable
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          marginBottom: '20px',
+          color: '#555',
+          backgroundColor: '#d3d3d3',
+          padding: '10px',
+          borderRadius: '5px'
+        }}
+      >
+        - Real-time alert system could help manage chatbot behaviors
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          marginBottom: '20px',
+          color: '#555',
+          backgroundColor: '#c4c4c4',
+          padding: '10px',
+          borderRadius: '5px'
+        }}
+      >
+        - Simple and easy to understand metrics
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{
+          marginBottom: '20px',
+          color: '#555',
+          backgroundColor: '#b6b6b6',
+          padding: '10px',
+          borderRadius: '5px'
+        }}
+      >
+        - Customized alerts with multiple metrics combination for your needs
+      </Typography>
             <Typography variant="body1" style={{ marginBottom: "20px" }}>
               -{" "}
               <span
