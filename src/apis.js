@@ -14,7 +14,7 @@ const postEvaluate = async (email, context, response, accessToken) => {
 };
 
 const postAnyMetric = async (limit, accessToken) => {
-  const url = `${BASE_URL}/alert/any`;
+  const url = `${BASE_URL}/alert`;
   const payload = {
     limit: parseInt(limit),
     alertType: "Any"
@@ -24,7 +24,7 @@ const postAnyMetric = async (limit, accessToken) => {
 };
 
 const postSpecificMetric = async (limit, metric, accessToken) => {
-  const url = `${BASE_URL}/alert/specific`;
+  const url = `${BASE_URL}/alert`;
   const payload = {
     limit: parseInt(limit),
     metrics: metric,
@@ -54,8 +54,8 @@ const getAlert = async (token) => {
   return getWithToken(url, token);
 };
 
-const deleteAlert = async (accessToken) => {
-  const url = `${BASE_URL}/alert`;
+const deleteAlert = async (documentId,accessToken) => {
+  const url = `${BASE_URL}/alert/${documentId}`;
   const response = await axios.delete(url, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -95,7 +95,6 @@ const postRequestWithToken = async (url, payload, accessToken) => {
         },
       },
     );
-
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 500) {

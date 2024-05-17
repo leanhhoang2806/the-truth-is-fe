@@ -97,7 +97,7 @@ const AlertComponent = () => {
   const fetchData = async () => {
     const alert = await getAlert(getToken());
     if (alert !== "null") {
-      setData(JSON.parse(alert));
+      setData(alert);
     } else {
       setData({});
     }
@@ -120,10 +120,19 @@ const AlertComponent = () => {
   };
 
   const handleRemoveAlert = async () => {
-    await deleteAlert(getToken());
+    await deleteAlert(data["_id"],getToken());
     await fetchData();
     setAnyInputValue("");
     setAlert("");
+  };
+  const formatMetrics = (metrics) => {
+    if (!metrics || metrics.length === 0) {
+      return 'Any';
+    }
+    if (metrics.length === 1) {
+      return metrics[0] + '.';
+    }
+    return metrics.slice(0, -1).join(', ') + ', and ' + metrics.slice(-1) + '.';
   };
 
   useEffect(() => {
@@ -143,9 +152,14 @@ const AlertComponent = () => {
         <Typography variant="h5" component="div" sx={{ paddingBottom: "20px" }}>
           Current alert setting
         </Typography>
+        {Object.keys(data).length === 0 && (
+          <Typography variant="h7" component="div">
+            No Alert setting
+          </Typography>
+        )}
         {Object.keys(data).length > 0 && (
           <Typography variant="h7" component="div">
-            Metric type: <span style={{ color: "red" }}>{data["metric"]}</span>
+            Metric type: <span style={{ color: "red" }}>{formatMetrics(data["metrics"])}</span>
           </Typography>
         )}
         {Object.keys(data).length > 0 && (
@@ -314,7 +328,6 @@ const DemoChart = () => {
 
     return timestamps;
   };
-  console.log(generateTimestamps());
 
   return (
     <LineChart
@@ -350,7 +363,6 @@ const BasicLineChart = () => {
   const fetchData = async () => {
     const result = await getEvaluate(getToken());
     setEvaluations(result);
-    console.log(result)
   };
 
   const convertTimestampToEpoch = (timestamp) => {
