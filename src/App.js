@@ -420,18 +420,27 @@ const ResponseAnalysis = () => {
   const [response, setResponse] = useState("");
   const [displayResult, setDisplayResult] = useState({});
   const [loading, setLoading] = useState(false);
+  const [limitDisplay, setLimitDisplay] = useState(false);
   const { loginWithRedirect } = useAuth0();
 
   const handleEvaluateClick = async () => {
     setLoading(true);
-    const result = await postEvaluate(
-      user.email,
-      context,
-      response,
-      getToken(),
-    );
-    setDisplayResult(result);
-    setLoading(false);
+    try {
+      const result = await postEvaluate(
+        user.email,
+        context,
+        response,
+        getToken(),
+      );
+      setLimitDisplay(false)
+      setDisplayResult(result);
+      setLoading(false);
+    }
+    catch {
+      setLimitDisplay(true)
+      setLoading(false)
+    }
+
   };
 
   return (
@@ -482,6 +491,7 @@ const ResponseAnalysis = () => {
         </Button>
       )} */}
       </div>
+      {limitDisplay && <Typography variant="h6">Please wait 30 mins for your next evaluation. Also, API key is available. Please email: <span style={{ color: "blue" }}> popo24_admin@gmail.com </span></Typography> }
       {Object.keys(displayResult).length !== 0 && (
         <div>
           <Typography variant="h6">Evaluation Result</Typography>
