@@ -16,7 +16,7 @@ const postEvaluate = async (email, context, response, accessToken) => {
 const postAnyMetric = async (limit, accessToken) => {
   const url = `${BASE_URL}/alert`;
   const payload = {
-    limit: parseInt(limit),
+    limit: [parseInt(limit)],
     alertType: "Any",
   };
 
@@ -26,7 +26,7 @@ const postAnyMetric = async (limit, accessToken) => {
 const postSpecificMetric = async (limit, metric, accessToken) => {
   const url = `${BASE_URL}/alert`;
   const payload = {
-    limit: parseInt(limit),
+    limit,
     metrics: metric,
     alertType: "Combined",
   };

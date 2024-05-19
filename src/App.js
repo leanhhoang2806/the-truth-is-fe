@@ -68,6 +68,7 @@ const AlertComponent = () => {
   const [alert, setAlert] = React.useState("");
   const [anyInputValue, setAnyInputValue] = useState("");
   const [selectedMetrics, setSelectedMetrics] = React.useState([]);
+  const [inputValues, setInputValues] = useState({});
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -113,7 +114,8 @@ const AlertComponent = () => {
     setAlert("");
   };
   const handleSpecificMetricSubmit = async () => {
-    await postSpecificMetric(anyInputValue, selectedMetrics, getToken()); // Set limit set status to true after submission
+    const listOfInputValues = selectedMetrics.map(item => parseInt(inputValues[item]))
+    await postSpecificMetric(listOfInputValues, selectedMetrics, getToken()); // Set limit set status to true after submission
     await fetchData();
     setAnyInputValue("");
     setAlert("");
@@ -134,6 +136,15 @@ const AlertComponent = () => {
     }
     return metrics.slice(0, -1).join(", ") + ", and " + metrics.slice(-1) + ".";
   };
+
+  const handleInputChangeForCombinedMetric = (metric, event) => {
+    const value = event.target.value;
+    setInputValues(prevValues => ({
+      ...prevValues,
+      [metric]: value,
+    }));
+  };
+
 
   useEffect(() => {
     fetchData();
@@ -167,8 +178,8 @@ const AlertComponent = () => {
         )}
         {Object.keys(data).length > 0 && (
           <Typography variant="h7" component="div">
-            Send notification when any metric is greateer than:{" "}
-            <span style={{ color: "red" }}>{data["limit"]}</span>
+            Send notification when any metric is greater than:{" "}
+            <span style={{ color: "red" }}>{formatMetrics(data["limit"])}</span>
           </Typography>
         )}
         {Object.keys(data).length > 0 && (
@@ -258,21 +269,24 @@ const AlertComponent = () => {
               </FormControl>
             </div>
           )}
-          {alert === "SpecificMetric" && selectedMetrics.length > 0 && (
-            <TextField
-              id="input-value"
-              label="Enter Limit Value Between (1-100)"
-              type="number"
-              value={anyInputValue}
-              onChange={handleInputChange}
-              inputProps={{ min: 1, max: 100 }}
-              sx={{ marginTop: "10px", marginBottom: "10px" }}
-              fullWidth
-            />
-          )}
+      {alert === "SpecificMetric" && selectedMetrics.length > 0 && (
+        selectedMetrics.map((metric, index) => (
+          <TextField
+            key={index}
+            id={`input-value-${metric}`}
+            label={`Enter Limit Value for ${metric} (1-100)`}
+            type="number"
+            value={inputValues[metric] || ''}
+            onChange={event => handleInputChangeForCombinedMetric(metric, event)}
+            inputProps={{ min: 1, max: 100 }}
+            sx={{ marginTop: "10px", marginBottom: "10px" }}
+            fullWidth
+          />
+        ))
+      )}
           {alert === "SpecificMetric" &&
-            selectedMetrics.length > 0 &&
-            anyInputValue > 0 && (
+            selectedMetrics.length > 0 && 
+            Object.keys(inputValues).length > 0 && (
               <Button variant="contained" onClick={handleSpecificMetricSubmit}>
                 Submit
               </Button>
@@ -738,32 +752,9 @@ const Spinner = ({ loading }) => {
 };
 
 const App = () => {
-  const { isAuthenticated, user, isLoading } = useAuth0();
-  const [context, setContext] = useState("");
-  const [response, setResponse] = useState("");
-  const [displayResult, setDisplayResult] = useState({});
-  const [loading, setLoading] = useState(false);
+  const { isAuthenticated, isLoading } = useAuth0();
   const { loginWithRedirect } = useAuth0();
 
-  const handleEvaluateClick = async () => {
-    setLoading(true);
-    const key = "@@auth0spajs@@::PM3G9YAvqYvMEKGOP5htCpZd5iG8VIxz::@@user@@";
-    const userData = localStorage.getItem(key);
-    const userDataJson = JSON.parse(userData);
-    const result = await postEvaluate(
-      user.email,
-      context,
-      response,
-      userDataJson["id_token"],
-    );
-    setDisplayResult(result);
-    setLoading(false);
-  };
-
-  // const handleEvaluateWithTokenClick = () => {
-  //   // Logic for Evaluate With Token button
-  //   alert("Evaluate With Token button clicked");
-  // };
 
   const Main = () => {
     return (
