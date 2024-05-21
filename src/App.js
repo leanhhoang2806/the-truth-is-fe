@@ -20,6 +20,7 @@ import {
   postAnyMetric,
   deleteAlert,
   postSpecificMetric,
+  postEmailCollection
 } from "./apis";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
@@ -430,6 +431,8 @@ const BasicLineChart = () => {
 
 const ResponseAnalysis = () => {
   const { isAuthenticated, user, isLoading } = useAuth0();
+
+  const [email, setEmail] = useState('');
   const [context, setContext] = useState("");
   const [response, setResponse] = useState("");
   const [displayResult, setDisplayResult] = useState({});
@@ -437,6 +440,14 @@ const ResponseAnalysis = () => {
   const [limitDisplay, setLimitDisplay] = useState(false);
   const { loginWithRedirect } = useAuth0();
 
+  const submitEmail = () => {
+    postEmailCollection(getToken())
+  }
+
+
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
   const handleEvaluateClick = async () => {
     setLoading(true);
     try {
@@ -456,6 +467,8 @@ const ResponseAnalysis = () => {
     }
 
   };
+
+  console.log(limitDisplay)
 
   return (
     <Container
@@ -505,8 +518,23 @@ const ResponseAnalysis = () => {
         </Button>
       )} */}
       </div>
-      {limitDisplay && <Typography variant="h6">Please wait 30 mins for your next evaluation. Also, API key is available. Please email: <span style={{ color: "blue" }}> popo24_admin@gmail.com </span></Typography> }
-      {Object.keys(displayResult).length !== 0 && (
+      {limitDisplay && 
+      <>
+
+      <Typography variant="h6">Please wait 30 mins for your next evaluation. Also, API key is available.</Typography> 
+        <TextField
+          label="Email"
+          type="email"
+          value={email}
+          onChange={handleEmailChange}
+          required
+          fullWidth
+        />
+        <Button variant="contained" color="primary" type="submit" onClick={submitEmail}>
+          Submit
+        </Button>
+      </>}
+      {Object.keys(displayResult).length !== 0 && limitDisplay === false && (
         <div>
           <Typography variant="h6">Evaluation Result</Typography>
           <Typography variant="body1">

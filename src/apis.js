@@ -1,7 +1,12 @@
 import axios from "axios";
 
-// const BASE_URL = "https://app.popo24.com"
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "https://app.popo24.com"
+// const BASE_URL = "http://localhost:8000"
+
+const postEmailCollection = async (accessToken) => {
+  const url = `${BASE_URL}/user_email`;
+  return postRequestWithToken(url, {}, accessToken)
+}
 
 const postEvaluate = async (email, context, response, accessToken) => {
   const url = `${BASE_URL}/evaluate`;
@@ -113,4 +118,5 @@ export {
   postAnyMetric,
   deleteAlert,
   postSpecificMetric,
+  postEmailCollection
 };
