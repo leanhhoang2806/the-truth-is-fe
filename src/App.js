@@ -521,7 +521,7 @@ const ResponseAnalysis = () => {
       {limitDisplay && 
       <>
 
-      <Typography variant="h6">Please wait 30 mins for your next evaluation. Also, API key is available.</Typography> 
+      <Typography variant="h6">Please wait 30 mins for your next evaluation. Also, API key is available. Pay as you go. No committment</Typography> 
         <TextField
           label="Email"
           type="email"
@@ -547,7 +547,7 @@ const ResponseAnalysis = () => {
             Coherence Score - {displayResult.coherence} out of 100{" "}
           </Typography>
           <Typography variant="body1">
-            Completeness Score - {displayResult.completeness} out of 100{" "}
+            Completeness Score - {displayResult.completenes} out of 100{" "}
           </Typography>
           <Typography variant="body1">
             Friendliness Score - {displayResult.friendliness} out of 100{" "}
