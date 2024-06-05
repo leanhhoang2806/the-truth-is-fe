@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const BASE_URL = "https://app.popo24.com"
-// const BASE_URL = "http://localhost:8000"
 
 const postEmailCollection = async (accessToken) => {
   const url = `${BASE_URL}/user_email`;

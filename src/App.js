@@ -46,6 +46,52 @@ import { format } from "date-fns";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import FormControl from "@mui/material/FormControl";
 import Checkbox from "@mui/material/Checkbox";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+
+const CurlCommand = () => {
+  const [copied, setCopied] = useState(false);
+
+  const curlCommand = `curl -X POST "https://app.popo24.com/evaluate" \\
+     -H "Content-Type: application/json" \\
+     -H "Authorization: Bearer ${getToken()}" \\
+     -d '{
+           "email": "example@example.com",
+           "question": "What is the weather today?",
+           "answer": "The weather is sunny."
+         }'`;
+
+  return (
+    <div style={{ padding: '20px', backgroundColor: '#1e1e1e', color: '#d4d4d4', borderRadius: '8px' }}>
+      <SyntaxHighlighter language="bash" style={vscDarkPlus}>
+        {curlCommand}
+      </SyntaxHighlighter>
+      <CopyToClipboard text={curlCommand} onCopy={() => setCopied(true)}>
+        <button style={{
+          marginTop: '10px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          backgroundColor: copied ? '#2ecc71' : '#3498db',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          {copied ? (
+            <span>&#10003; Copied</span> // Unicode checkmark symbol
+          ) : (
+            'Copy to Clipboard'
+          )}
+        </button>
+      </CopyToClipboard>
+    </div>
+  );
+};
 
 const METRIC_OPTIONS = [
   "sentiment",
@@ -55,6 +101,9 @@ const METRIC_OPTIONS = [
   "coherence",
   "friendliness",
 ];
+
+
+
 
 const getToken = () => {
   const key = "@@auth0spajs@@::PM3G9YAvqYvMEKGOP5htCpZd5iG8VIxz::@@user@@";
@@ -468,8 +517,6 @@ const ResponseAnalysis = () => {
 
   };
 
-  console.log(limitDisplay)
-
   return (
     <Container
       style={{
@@ -480,6 +527,11 @@ const ResponseAnalysis = () => {
       }}
     >
       <Spinner loading={loading} />
+      <Typography variant="h6">Send data programmatically</Typography>
+      <CurlCommand />
+      <hr/>
+
+      <Typography variant="h6">Send data manually</Typography>
       <TextareaAutosize
         style={styles.userInputBox}
         minRows={5}
