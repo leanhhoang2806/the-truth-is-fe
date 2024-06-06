@@ -1,12 +1,21 @@
 import axios from "axios";
 
-const BASE_URL = "https://app.popo24.com"
+// const BASE_URL = "https://app.popo24.com"
+const BASE_URL = "http://127.0.0.1:8000";
 
 const postEmailCollection = async (accessToken) => {
   const url = `${BASE_URL}/user_email`;
-  return postRequestWithToken(url, {}, accessToken)
-}
+  return postRequestWithToken(url, {}, accessToken);
+};
 
+const postLegalEvaluate = async (answer, accessToken) => {
+  const url = `${BASE_URL}/legal_evaluation`;
+  const payload = {
+    answer,
+  };
+
+  return postRequestWithToken(url, payload, accessToken);
+};
 const postEvaluate = async (email, context, response, accessToken) => {
   const url = `${BASE_URL}/evaluate`;
   const payload = {
@@ -117,5 +126,6 @@ export {
   postAnyMetric,
   deleteAlert,
   postSpecificMetric,
-  postEmailCollection
+  postEmailCollection,
+  postLegalEvaluate,
 };

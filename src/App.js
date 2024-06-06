@@ -9,6 +9,7 @@ import {
   Select,
   MenuItem,
   TextField,
+  FormControlLabel,
 } from "@mui/material";
 import Theme from "./theme";
 
@@ -20,7 +21,8 @@ import {
   postAnyMetric,
   deleteAlert,
   postSpecificMetric,
-  postEmailCollection
+  postEmailCollection,
+  postLegalEvaluate,
 } from "./apis";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { TextareaAutosize } from "@mui/base/TextareaAutosize";
@@ -46,10 +48,9 @@ import { format } from "date-fns";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import FormControl from "@mui/material/FormControl";
 import Checkbox from "@mui/material/Checkbox";
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const CurlCommand = () => {
   const [copied, setCopied] = useState(false);
@@ -64,28 +65,37 @@ const CurlCommand = () => {
          }'`;
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#1e1e1e', color: '#d4d4d4', borderRadius: '8px' }}>
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "#1e1e1e",
+        color: "#d4d4d4",
+        borderRadius: "8px",
+      }}
+    >
       <SyntaxHighlighter language="bash" style={vscDarkPlus}>
         {curlCommand}
       </SyntaxHighlighter>
       <CopyToClipboard text={curlCommand} onCopy={() => setCopied(true)}>
-        <button style={{
-          marginTop: '10px',
-          padding: '10px 20px',
-          fontSize: '16px',
-          backgroundColor: copied ? '#2ecc71' : '#3498db',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
+        <button
+          style={{
+            marginTop: "10px",
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: copied ? "#2ecc71" : "#3498db",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           {copied ? (
             <span>&#10003; Copied</span> // Unicode checkmark symbol
           ) : (
-            'Copy to Clipboard'
+            "Copy to Clipboard"
           )}
         </button>
       </CopyToClipboard>
@@ -101,9 +111,6 @@ const METRIC_OPTIONS = [
   "coherence",
   "friendliness",
 ];
-
-
-
 
 const getToken = () => {
   const key = "@@auth0spajs@@::PM3G9YAvqYvMEKGOP5htCpZd5iG8VIxz::@@user@@";
@@ -164,7 +171,9 @@ const AlertComponent = () => {
     setAlert("");
   };
   const handleSpecificMetricSubmit = async () => {
-    const listOfInputValues = selectedMetrics.map(item => parseInt(inputValues[item]))
+    const listOfInputValues = selectedMetrics.map((item) =>
+      parseInt(inputValues[item]),
+    );
     await postSpecificMetric(listOfInputValues, selectedMetrics, getToken()); // Set limit set status to true after submission
     await fetchData();
     setAnyInputValue("");
@@ -189,12 +198,11 @@ const AlertComponent = () => {
 
   const handleInputChangeForCombinedMetric = (metric, event) => {
     const value = event.target.value;
-    setInputValues(prevValues => ({
+    setInputValues((prevValues) => ({
       ...prevValues,
       [metric]: value,
     }));
   };
-
 
   useEffect(() => {
     fetchData();
@@ -319,23 +327,25 @@ const AlertComponent = () => {
               </FormControl>
             </div>
           )}
-      {alert === "SpecificMetric" && selectedMetrics.length > 0 && (
-        selectedMetrics.map((metric, index) => (
-          <TextField
-            key={index}
-            id={`input-value-${metric}`}
-            label={`Enter Limit Value for ${metric} (1-100)`}
-            type="number"
-            value={inputValues[metric] || ''}
-            onChange={event => handleInputChangeForCombinedMetric(metric, event)}
-            inputProps={{ min: 1, max: 100 }}
-            sx={{ marginTop: "10px", marginBottom: "10px" }}
-            fullWidth
-          />
-        ))
-      )}
           {alert === "SpecificMetric" &&
-            selectedMetrics.length > 0 && 
+            selectedMetrics.length > 0 &&
+            selectedMetrics.map((metric, index) => (
+              <TextField
+                key={index}
+                id={`input-value-${metric}`}
+                label={`Enter Limit Value for ${metric} (1-100)`}
+                type="number"
+                value={inputValues[metric] || ""}
+                onChange={(event) =>
+                  handleInputChangeForCombinedMetric(metric, event)
+                }
+                inputProps={{ min: 1, max: 100 }}
+                sx={{ marginTop: "10px", marginBottom: "10px" }}
+                fullWidth
+              />
+            ))}
+          {alert === "SpecificMetric" &&
+            selectedMetrics.length > 0 &&
             Object.keys(inputValues).length > 0 && (
               <Button variant="contained" onClick={handleSpecificMetricSubmit}>
                 Submit
@@ -481,18 +491,24 @@ const BasicLineChart = () => {
 const ResponseAnalysis = () => {
   const { isAuthenticated, user, isLoading } = useAuth0();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [context, setContext] = useState("");
   const [response, setResponse] = useState("");
   const [displayResult, setDisplayResult] = useState({});
   const [loading, setLoading] = useState(false);
   const [limitDisplay, setLimitDisplay] = useState(false);
+  const [checkboxStates, setCheckboxStates] = useState([false]);
+  const [legalDisplay, setLegalDisplay] = useState(false);
+  const handleCheckboxChange = (index) => (event) => {
+    const newStates = [...checkboxStates];
+    newStates[index] = event.target.checked;
+    setCheckboxStates(newStates);
+  };
   const { loginWithRedirect } = useAuth0();
 
   const submitEmail = () => {
-    postEmailCollection(getToken())
-  }
-
+    postEmailCollection(getToken());
+  };
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -500,21 +516,25 @@ const ResponseAnalysis = () => {
   const handleEvaluateClick = async () => {
     setLoading(true);
     try {
+      if (checkboxStates[0] === true) {
+        const legalResult = await postLegalEvaluate(response, getToken());
+
+        setLegalDisplay(legalResult);
+      }
+
       const result = await postEvaluate(
         user.email,
         context,
         response,
         getToken(),
       );
-      setLimitDisplay(false)
+      setLimitDisplay(false);
       setDisplayResult(result);
       setLoading(false);
+    } catch {
+      setLimitDisplay(true);
+      setLoading(false);
     }
-    catch {
-      setLimitDisplay(true)
-      setLoading(false)
-    }
-
   };
 
   return (
@@ -529,16 +549,32 @@ const ResponseAnalysis = () => {
       <Spinner loading={loading} />
       <Typography variant="h6">Send data programmatically</Typography>
       <CurlCommand />
-      <hr/>
+      <hr />
 
-      <Typography variant="h6">Send data manually</Typography>
-      <TextareaAutosize
-        style={styles.userInputBox}
-        minRows={5}
-        placeholder="Enter the context of the LLM response..."
-        value={context}
-        onChange={(event) => setContext(event.target.value)}
-      />
+      <Typography variant="h6">Send message manually</Typography>
+      <div style={styles.inputContainer}>
+        <div style={styles.checkboxesRow}>
+          <Typography variant="h8" style={styles.boldTypography}>
+            Paid features:{" "}
+          </Typography>
+          {["Legal (boolean)"].map((word, index) => (
+            <div key={index} style={styles.checkboxLabel}>
+              <Checkbox
+                checked={checkboxStates[index]}
+                onChange={handleCheckboxChange(index)}
+              />
+              {word}
+            </div>
+          ))}
+        </div>
+        <TextareaAutosize
+          style={styles.userInputBox}
+          minRows={5}
+          placeholder="Enter the context of the LLM response..."
+          value={context}
+          onChange={(event) => setContext(event.target.value)}
+        />
+      </div>
       <TextareaAutosize
         style={styles.userInputBox}
         minRows={5}
@@ -555,37 +591,31 @@ const ResponseAnalysis = () => {
         >
           Evaluate
         </Button>
-
-        {/* Evaluate with Token button (shown only when logged in) */}
-        {/* {isAuthenticated && (
-        <Button
-          variant="contained"
-          style={{
-            ...styles.button,
-            ...styles.evaluateWithTokenButton,
-          }}
-          onClick={handleEvaluateWithTokenClick}
-        >
-          Evaluate With Token
-        </Button>
-      )} */}
       </div>
-      {limitDisplay && 
-      <>
-
-      <Typography variant="h6">Please wait 30 mins for your next evaluation. Also, API key is available. Pay as you go. No committment</Typography> 
-        <TextField
-          label="Email"
-          type="email"
-          value={email}
-          onChange={handleEmailChange}
-          required
-          fullWidth
-        />
-        <Button variant="contained" color="primary" type="submit" onClick={submitEmail}>
-          Submit
-        </Button>
-      </>}
+      {limitDisplay && (
+        <>
+          <Typography variant="h6">
+            Please wait 30 mins for your next evaluation. Also, API key is
+            available. Pay as you go. No committment
+          </Typography>
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            required
+            fullWidth
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            onClick={submitEmail}
+          >
+            Submit
+          </Button>
+        </>
+      )}
       {Object.keys(displayResult).length !== 0 && limitDisplay === false && (
         <div>
           <Typography variant="h6">Evaluation Result</Typography>
@@ -604,6 +634,10 @@ const ResponseAnalysis = () => {
           <Typography variant="body1">
             Friendliness Score - {displayResult.friendliness} out of 100{" "}
           </Typography>
+          {checkboxStates[0] && <Typography variant="body1">
+            Is this response might have trouble with legal issue ? -{" "}
+            {legalDisplay}
+          </Typography>}
         </div>
       )}
     </Container>
@@ -788,6 +822,31 @@ const styles = {
     backgroundColor: "#ffff99", // Light yellow color
     color: "#000", // Black text
   },
+
+  userInputBox: {
+    width: "100%",
+    padding: "10px",
+    marginTop: "10px",
+    marginBottom: "10px",
+  },
+  inputContainer: {
+    marginBottom: "20px",
+  },
+  checkboxesRow: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: "10px",
+  },
+  checkboxLabel: {
+    display: "flex",
+    alignItems: "center",
+    marginLeft: "5px",
+    marginRight: "20px",
+  },
+  boldTypography: {
+    fontWeight: "bold",
+  },
 };
 
 const LoadingOverlay = () => {
@@ -835,7 +894,6 @@ const App = () => {
   const { isAuthenticated, isLoading } = useAuth0();
   const { loginWithRedirect } = useAuth0();
 
-
   const Main = () => {
     return (
       <Theme>
@@ -858,57 +916,61 @@ const App = () => {
               textAlign: "left",
             }}
           >
-      <Typography variant="h5" sx={{ marginBottom: '20px', color: '#333', fontWeight: 'bold' }}>
-        Monitor and Alert for Chatbots
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          marginBottom: '20px',
-          color: '#555',
-          backgroundColor: '#e0e0e0',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        - Chatbot behaviors are often unpredictable
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          marginBottom: '20px',
-          color: '#555',
-          backgroundColor: '#d3d3d3',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        - Real-time alert system could help manage chatbot behaviors
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          marginBottom: '20px',
-          color: '#555',
-          backgroundColor: '#c4c4c4',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        - Simple and easy to understand metrics
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          marginBottom: '20px',
-          color: '#555',
-          backgroundColor: '#b6b6b6',
-          padding: '10px',
-          borderRadius: '5px'
-        }}
-      >
-        - Customized alerts with multiple metrics combination for your needs
-      </Typography>
+            <Typography
+              variant="h5"
+              sx={{ marginBottom: "20px", color: "#333", fontWeight: "bold" }}
+            >
+              Monitor and Alert for Chatbots
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                marginBottom: "20px",
+                color: "#555",
+                backgroundColor: "#e0e0e0",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              - Chatbot behaviors are often unpredictable
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                marginBottom: "20px",
+                color: "#555",
+                backgroundColor: "#d3d3d3",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              - Real-time alert system could help manage chatbot behaviors
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                marginBottom: "20px",
+                color: "#555",
+                backgroundColor: "#c4c4c4",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              - Simple and easy to understand metrics
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                marginBottom: "20px",
+                color: "#555",
+                backgroundColor: "#b6b6b6",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
+              - Customized alerts with multiple metrics combination for your
+              needs
+            </Typography>
             <Typography variant="body1" style={{ marginBottom: "20px" }}>
               -{" "}
               <span
