@@ -519,7 +519,7 @@ const ResponseAnalysis = () => {
       if (checkboxStates[0] === true) {
         const legalResult = await postLegalEvaluate(response, getToken());
 
-        setLegalDisplay(legalResult);
+        setLegalDisplay(legalResult.is_legal);
       }
 
       const result = await postEvaluate(
@@ -533,6 +533,7 @@ const ResponseAnalysis = () => {
       setLoading(false);
     } catch {
       setLimitDisplay(true);
+      setDisplayResult({})
       setLoading(false);
     }
   };
